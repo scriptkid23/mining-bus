@@ -14,6 +14,7 @@ const convertStationToID = async (station) => {
   return await Axios({
     method:"POST",
     url:"/Engine/Business/Search/action.ashx",
+    baseURL:"http://timbus.vn",
     headers:{
         'Accept': 'application/json, text/javascript, */*; q=0.01',
         'X-Requested-With': 'XMLHttpRequest',
@@ -33,6 +34,7 @@ const getVehicle = (fleetCode, stationID) =>{
     return Axios({
       method:"POST",
       url:"/Engine/Business/Vehicle/action.ashx",
+      baseURL:"http://timbus.vn",
       headers:{
         'Accept': 'application/json, text/javascript, */*; q=0.01',
         'X-Requested-With': 'XMLHttpRequest',
@@ -52,6 +54,7 @@ const getBusInformation = async () => {
   return Axios({
     method:"POST",
     url:"/Engine/Business/Search/action.ashx",
+    baseURL:"http://timbus.vn",
     headers:{
       'Accept': 'application/json, text/javascript, */*; q=0.01',
       'X-Requested-With': 'XMLHttpRequest',
@@ -68,6 +71,7 @@ const getListBreakpointOfBus = async (fid) => {
   return await Axios({
     method:"POST",
     url:"/Engine/Business/Search/action.ashx",
+    baseURL:"http://timbus.vn",
     headers:{
       'Accept': 'application/json, text/javascript, */*; q=0.01',
       'X-Requested-With': 'XMLHttpRequest',
