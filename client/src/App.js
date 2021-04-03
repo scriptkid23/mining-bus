@@ -14,6 +14,7 @@ const convertStationToID = async (station) => {
   return await Axios({
     method:"POST",
     url:"/Engine/Business/Search/action.ashx",
+    baseURL:"http://timbus.vn",
     proxy:{
       host:"http://timbus.vn",
       port:80,
@@ -21,7 +22,6 @@ const convertStationToID = async (station) => {
     headers:{
         'Access-Control-Allow-Origin': '*',
         'Accept': 'application/json, text/javascript, */*; q=0.01',
-        'X-Requested-With': 'XMLHttpRequest',
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'Accept-Language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5',
     },
@@ -38,6 +38,7 @@ const getVehicle = (fleetCode, stationID) =>{
     return Axios({
       method:"POST",
       url:"/Engine/Business/Vehicle/action.ashx",
+      baseURL:"http://timbus.vn",
       proxy:{
         host:"http://timbus.vn",
         port:80,
@@ -45,7 +46,6 @@ const getVehicle = (fleetCode, stationID) =>{
       headers:{
         'Access-Control-Allow-Origin': '*',
         'Accept': 'application/json, text/javascript, */*; q=0.01',
-        'X-Requested-With': 'XMLHttpRequest',
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'Accept-Language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5',
     },
@@ -62,6 +62,7 @@ const getBusInformation = async () => {
   return Axios({
     method:"POST",
     url:"/Engine/Business/Search/action.ashx",
+    baseURL:"http://timbus.vn",
     proxy:{
       host:"http://timbus.vn",
       port:80,
@@ -69,7 +70,6 @@ const getBusInformation = async () => {
     headers:{
       'Access-Control-Allow-Origin': '*',
       'Accept': 'application/json, text/javascript, */*; q=0.01',
-      'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'Accept-Language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5',
   },
@@ -83,6 +83,7 @@ const getListBreakpointOfBus = async (fid) => {
   return await Axios({
     method:"POST",
     url:"/Engine/Business/Search/action.ashx",
+    baseURL:"http://timbus.vn",
     proxy:{
       host:"http://timbus.vn",
       port:80,
@@ -90,7 +91,6 @@ const getListBreakpointOfBus = async (fid) => {
     headers:{
       'Access-Control-Allow-Origin': '*',
       'Accept': 'application/json, text/javascript, */*; q=0.01',
-      'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'Accept-Language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5',
   },
