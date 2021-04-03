@@ -20,7 +20,6 @@ const convertStationToID = async (station) => {
       port:80,
     },
     headers:{
-        'Access-Control-Allow-Origin': '*',
         'Accept': 'application/json, text/javascript, */*; q=0.01',
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'Accept-Language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5',
@@ -44,7 +43,6 @@ const getVehicle = (fleetCode, stationID) =>{
         port:80,
       },
       headers:{
-        'Access-Control-Allow-Origin': '*',
         'Accept': 'application/json, text/javascript, */*; q=0.01',
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'Accept-Language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5',
@@ -68,7 +66,6 @@ const getBusInformation = async () => {
       port:80,
     },
     headers:{
-      'Access-Control-Allow-Origin': '*',
       'Accept': 'application/json, text/javascript, */*; q=0.01',
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'Accept-Language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5',
@@ -89,7 +86,6 @@ const getListBreakpointOfBus = async (fid) => {
       port:80,
     },
     headers:{
-      'Access-Control-Allow-Origin': '*',
       'Accept': 'application/json, text/javascript, */*; q=0.01',
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'Accept-Language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5',
