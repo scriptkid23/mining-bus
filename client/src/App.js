@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import Axios from 'axios'
-import {Modal,Button,InputGroup,FormControl} from 'react-bootstrap'
+import {Modal,Button,InputGroup,FormControl,Dropdown} from 'react-bootstrap'
 import './App.css';
 import Logo from './add-button.svg'
 
@@ -150,20 +150,30 @@ const AddBusChecking =  (props) => {
   const [show, setShow] = React.useState(false);
   const [address, set_address] = React.useState(null);
   const [fleetCode, set_fleet_code] = React.useState(null);
-
+  const [search_result, setSearchResult] = React.useState([]);
+  const [currentObjectID, setCurrentObjectID] = React.useState(null);
+  const [flag,setFlag] = React.useState(true);
   const set_address_data = async(value) =>{
+    set_address(value);
     let searchListBreakpoint = await searchListBreakPoint(value)
-    console.log(searchListBreakpoint)
+    console.log(searchListBreakpoint.data)
+    if(searchListBreakpoint.data.length > 0 && searchListBreakpoint.data.length < 3){
+      setSearchResult(searchListBreakpoint.data);
+      setFlag(true);
+    }
+    
   }
   var result = [];
 
   const handleClose = () => setShow(false);
   const handleStart = async () => {
-    let {data} = await convertStationToID(address)
     console.log(address)
-    let searchListBreakpoint = await searchListBreakPoint(address)
-    console.log(searchListBreakpoint);
-    let currentObjectID = data['dt']['Data'][0]['ObjectID']
+    // let searchListBreakpoint = await searchListBreakPoint(address)
+    // console.log(searchListBreakpoint);
+    // console.log(searchListBreakpoint.data)
+    // setSearchResult(searchListBreakpoint.data);
+
+    
 
     let busInformation = await getBusInformation();
     let ObjectID = busInformation.data.dt.Data.filter(value => value['FleedCode'] == fleetCode)[0].ObjectID
@@ -226,7 +236,27 @@ const AddBusChecking =  (props) => {
               onChange = {(e) => set_address_data(e.target.value)}
             />
            
+           
           </InputGroup>
+          { flag && <div class="dropdown">
+          
+      
+              {/* <Dropdown.Item eventKey="2">Ngọc than Something else</Dropdown.Item>
+              <Dropdown.Item eventKey="3">Something else here</Dropdown.Item> */}
+              {
+                search_result.map((value,index) => {
+                    return(
+                      <Dropdown.Item key={index} onClick={() => {
+                        set_address(value.label); setFlag(false); setCurrentObjectID(value.id.toString())
+                      }
+                      }>{value.label}</Dropdown.Item>
+                    )
+              
+                 
+                })
+              }
+     
+          </div>}
           <InputGroup className="mb-3">
             <FormControl
               aria-label="Default"
