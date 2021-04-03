@@ -94,6 +94,27 @@ const getListBreakpointOfBus = async (fid) => {
   })
 }
 
+const searchListBreakPoint = async (key) => {
+  let formData = new FormData();
+  formData.append('act','listDiemDung');
+  formData.append('keyword',key);
+  return await Axios({
+    method:"POST",
+    url:"/Engine/Business/Search/action.ashx",
+    baseURL:"http://timbus.vn",
+    proxy:{
+      host:"http://timbus.vn",
+      port:80,
+    },
+    headers:{
+      'Accept': 'application/json, text/javascript, */*; q=0.01',
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Accept-Language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5',
+  },
+  data:formData,
+  })
+}
+
 const BusComponent = ({fleetCode, code, partRemained, timeRemained, station}) => {
         const toHHMMSS = function (value) {
           var sec_num = parseInt(value, 10); // don't forget the second param
@@ -124,17 +145,26 @@ const BusComponent = ({fleetCode, code, partRemained, timeRemained, station}) =>
       )
 }
 
+
 const AddBusChecking =  (props) => {
   const [show, setShow] = React.useState(false);
   const [address, set_address] = React.useState(null);
   const [fleetCode, set_fleet_code] = React.useState(null);
 
+  const set_address_data = async(value) =>{
+    let searchListBreakpoint = await searchListBreakPoint(value)
+    console.log(searchListBreakpoint)
+  }
   var result = [];
 
   const handleClose = () => setShow(false);
   const handleStart = async () => {
     let {data} = await convertStationToID(address)
+    console.log(address)
+    let searchListBreakpoint = await searchListBreakPoint(address)
+    console.log(searchListBreakpoint);
     let currentObjectID = data['dt']['Data'][0]['ObjectID']
+
     let busInformation = await getBusInformation();
     let ObjectID = busInformation.data.dt.Data.filter(value => value['FleedCode'] == fleetCode)[0].ObjectID
     var listBreakpointOfBus = await getListBreakpointOfBus(ObjectID);
@@ -193,7 +223,7 @@ const AddBusChecking =  (props) => {
               aria-describedby="inputGroup-sizing-default"
               placeholder="Địa chỉ"
               value = {address}
-              onChange = {(e) => set_address(e.target.value)}
+              onChange = {(e) => set_address_data(e.target.value)}
             />
            
           </InputGroup>
@@ -203,7 +233,7 @@ const AddBusChecking =  (props) => {
               aria-describedby="inputGroup-sizing-default"
               placeholder="Mã xe"
               value = {fleetCode}
-              onChange = {(e) => set_fleet_code(e.target.value)}
+              onChange = {(e) => set_fleet_code(e.target.value.toUpperCase())}
             />
           </InputGroup>
       </Modal.Body>
