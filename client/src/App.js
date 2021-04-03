@@ -15,6 +15,10 @@ const convertStationToID = async (station) => {
     method:"POST",
     url:"/Engine/Business/Search/action.ashx",
     baseURL:"http://timbus.vn",
+    proxy:{
+      host:"http://timbus.vn",
+      port:80,
+    },
     headers:{
         'Accept': 'application/json, text/javascript, */*; q=0.01',
         'X-Requested-With': 'XMLHttpRequest',
@@ -35,6 +39,10 @@ const getVehicle = (fleetCode, stationID) =>{
       method:"POST",
       url:"/Engine/Business/Vehicle/action.ashx",
       baseURL:"http://timbus.vn",
+      proxy:{
+        host:"http://timbus.vn",
+        port:80,
+      },
       headers:{
         'Accept': 'application/json, text/javascript, */*; q=0.01',
         'X-Requested-With': 'XMLHttpRequest',
@@ -55,6 +63,10 @@ const getBusInformation = async () => {
     method:"POST",
     url:"/Engine/Business/Search/action.ashx",
     baseURL:"http://timbus.vn",
+    proxy:{
+      host:"http://timbus.vn",
+      port:80,
+    },
     headers:{
       'Accept': 'application/json, text/javascript, */*; q=0.01',
       'X-Requested-With': 'XMLHttpRequest',
@@ -72,6 +84,10 @@ const getListBreakpointOfBus = async (fid) => {
     method:"POST",
     url:"/Engine/Business/Search/action.ashx",
     baseURL:"http://timbus.vn",
+    proxy:{
+      host:"http://timbus.vn",
+      port:80,
+    },
     headers:{
       'Accept': 'application/json, text/javascript, */*; q=0.01',
       'X-Requested-With': 'XMLHttpRequest',
