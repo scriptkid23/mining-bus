@@ -79,6 +79,17 @@ const getListBreakpointOfBus = async (fid) => {
 }
 
 const BusComponent = ({fleetCode, code, partRemained, timeRemained, station}) => {
+        const toHHMMSS = function (value) {
+          var sec_num = parseInt(value, 10); // don't forget the second param
+          var hours   = Math.floor(sec_num / 3600);
+          var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+          var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+          if (hours   < 10) {hours   = "0"+hours;}
+          if (minutes < 10) {minutes = "0"+minutes;}
+          if (seconds < 10) {seconds = "0"+seconds;}
+          return hours + ':' + minutes + ':' + seconds;
+      }
       const convertPartRemained = (value) =>{
         if(value >= 1000){
           return Math.round(value/1000 * 100) / 100 + ' km'
@@ -88,14 +99,15 @@ const BusComponent = ({fleetCode, code, partRemained, timeRemained, station}) =>
         }
       }
       return(
-        <div className="bus-component">
+        <div className="bus-component d-flex flex-column justify-content-center">
           <h1>{code} - {fleetCode}</h1>
           <p>{convertPartRemained(partRemained)}</p>
-          <p>{timeRemained}</p>
+          <p>{toHHMMSS(timeRemained)}</p>
           <p>{station}</p>
         </div>
       )
 }
+
 const AddBusChecking =  (props) => {
   const [show, setShow] = React.useState(false);
   const [address, set_address] = React.useState(null);
@@ -108,23 +120,39 @@ const AddBusChecking =  (props) => {
     let {data} = await convertStationToID(address)
     let currentObjectID = data['dt']['Data'][0]['ObjectID']
     let busInformation = await getBusInformation();
-    console.log(busInformation)
-    var listBreakpointOfBus = await getListBreakpointOfBus(fleetCode);
-    console.log(listBreakpointOfBus)
-    result.push({fleetCode:fleetCode, stationID:currentObjectID.toString()})
+    let ObjectID = busInformation.data.dt.Data.filter(value => value['FleedCode'] == fleetCode)[0].ObjectID
+    var listBreakpointOfBus = await getListBreakpointOfBus(ObjectID);
+    
+   
     let go = listBreakpointOfBus.data.dt.Go.Station.filter((value) => value['Code'] == currentObjectID)
+
     if(go.length != 0){
+      result.push({
+        fleetCode:fleetCode, 
+        stationID:currentObjectID.toString(),
+        station:go[0].Name})
+
       let currrentIndex = listBreakpointOfBus.data.dt.Go.Station.indexOf(go[0]);
-      result.push({fleetCode:fleetCode, stationID:listBreakpointOfBus.data.dt.Go.Station[currrentIndex -1].Code})
+      result.push({
+        fleetCode:fleetCode, 
+        stationID:listBreakpointOfBus.data.dt.Go.Station[currrentIndex -1].Code,
+        station:listBreakpointOfBus.data.dt.Go.Station[currrentIndex -1].Name})
     }
     else{
       let re = listBreakpointOfBus.data.dt.Re.Station.filter((value) => value['Code'] == currentObjectID)
       if(re.length != 0){
+        result.push({
+          fleetCode:fleetCode, 
+          stationID:currentObjectID.toString(),
+          station:re[0].Name})
+
         let currrentIndex = listBreakpointOfBus.data.dt.Re.Station.indexOf(re[0]);
-        result.push({fleetCode:fleetCode, stationID:listBreakpointOfBus.data.dt.Re.Station[currrentIndex -1].Code})
+        result.push({
+          fleetCode:fleetCode, 
+          stationID:listBreakpointOfBus.data.dt.Re.Station[currrentIndex -1].Code,
+          station:listBreakpointOfBus.data.dt.Re.Station[currrentIndex -1].Name})
       }
     }
-    // console.log(result.reverse())
     props.setValue({type:"SET_VALUE",value:result.reverse()})
     setShow(false);
     
@@ -179,42 +207,54 @@ function App() {
   const reducer = (state,action) => {
     switch(action.type){
       case 'SET_VALUE':
-        console.log(...state.data)
         return {
-          data : [...state.data, action.value]
+          data : [...state.data, ...action.value]
         };
       default:
         return new Error();
     }
   }
+  const [list_result,setListResult] = React.useState([]);
   const [list_bus,dispatch] = React.useReducer(reducer,{data:[]});
   React.useEffect(() => {
-    Axios.all([getVehicle("107","2024")]).then(
-      Axios.spread((...res) => {
-        console.log(res)
-      })
-    )
-  },[])
+    
+     
+      let requests = []
+      for(let i in list_bus.data){
+          requests.push(getVehicle(list_bus.data[i].fleetCode, list_bus.data[i].stationID))
+      }
+      setTimeout(() => {
+        Axios.all(requests).then(Axios.spread((...res ) => {
+        
+          for(let i in list_bus.data){
+            res[i]['station'] = list_bus.data[i].station;
+          }
+          setListResult(res)
+        }))
+      },[3000])
+
+  })
   
   return (
     <div className="App">
-        {/* <div ref={(ref) => refMap = ref} 
-        style={{width:"100%",height:"100vh"}}/> */}
+     
         <div className="list-bus">
-            <BusComponent/>
-            <BusComponent/>     
-            <BusComponent/>
-            <BusComponent/>
-            <BusComponent/>
-            <BusComponent/>      
-            
+      
+            {list_result.length != 0 && list_result.map((value,index) => {
+              return(<BusComponent key={index}
+                code = {value.data.dt[0].BienKiemSoat}
+
+               fleetCode={value.data.dt[0].Fleet}
+               partRemained = {value.data.dt[0].PartRemained}
+               timeRemained = {value.data.dt[0].TimeRemained}
+               station = {value.station}
+               />)
+            })}
             </div>
         
         <div className="Logo">
           <AddBusChecking setValue = {(payload) => dispatch(payload)}/>
-          
         </div>
-        <Button onClick={() => console.log(list_bus)}>CLick me</Button>
     </div>
 
   );
