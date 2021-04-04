@@ -153,6 +153,7 @@ const AddBusChecking =  (props) => {
   const [search_result, setSearchResult] = React.useState([]);
   const [currentObjectID, setCurrentObjectID] = React.useState(null);
   const [flag,setFlag] = React.useState(true);
+
   const set_address_data = async(value) =>{
     set_address(value);
     let searchListBreakpoint = await searchListBreakPoint(value)
@@ -167,14 +168,7 @@ const AddBusChecking =  (props) => {
 
   const handleClose = () => setShow(false);
   const handleStart = async () => {
-    console.log(address)
-    // let searchListBreakpoint = await searchListBreakPoint(address)
-    // console.log(searchListBreakpoint);
-    // console.log(searchListBreakpoint.data)
-    // setSearchResult(searchListBreakpoint.data);
-
-    
-
+ 
     let busInformation = await getBusInformation();
     let ObjectID = busInformation.data.dt.Data.filter(value => value['FleedCode'] == fleetCode)[0].ObjectID
     var listBreakpointOfBus = await getListBreakpointOfBus(ObjectID);
@@ -238,11 +232,7 @@ const AddBusChecking =  (props) => {
            
            
           </InputGroup>
-          { flag && <div class="dropdown">
-          
-      
-              {/* <Dropdown.Item eventKey="2">Ngọc than Something else</Dropdown.Item>
-              <Dropdown.Item eventKey="3">Something else here</Dropdown.Item> */}
+          { flag && <div>  
               {
                 search_result.map((value,index) => {
                     return(
