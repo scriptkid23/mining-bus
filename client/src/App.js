@@ -152,15 +152,19 @@ const AddBusChecking =  (props) => {
   const [fleetCode, set_fleet_code] = React.useState(null);
   const [search_result, setSearchResult] = React.useState([]);
   const [currentObjectID, setCurrentObjectID] = React.useState(null);
-  const [flag,setFlag] = React.useState(true);
+  const [flag,setFlag] = React.useState(false);
 
   const set_address_data = async(value) =>{
+    
     set_address(value);
     let searchListBreakpoint = await searchListBreakPoint(value)
-    console.log(searchListBreakpoint.data)
+    
     if(searchListBreakpoint.data.length > 0 && searchListBreakpoint.data.length < 3){
       setSearchResult(searchListBreakpoint.data);
       setFlag(true);
+    }
+    if(value.length === 0){
+      setFlag(false)
     }
     
   }
@@ -168,7 +172,7 @@ const AddBusChecking =  (props) => {
 
   const handleClose = () => setShow(false);
   const handleStart = async () => {
- 
+    
     let busInformation = await getBusInformation();
     let ObjectID = busInformation.data.dt.Data.filter(value => value['FleedCode'] == fleetCode)[0].ObjectID
     var listBreakpointOfBus = await getListBreakpointOfBus(ObjectID);
@@ -203,12 +207,26 @@ const AddBusChecking =  (props) => {
           station:listBreakpointOfBus.data.dt.Re.Station[currrentIndex -1].Name})
       }
     }
+    
     props.setValue({type:"SET_VALUE",value:result.reverse()})
     setShow(false);
     
   };
   const handleShow = () => setShow(true);
-
+  const onInput = () => {
+    var val = document.getElementById("address-input").value;
+    var opts = document.getElementById('station').childNodes;
+    for (var i = 0; i < opts.length; i++) {
+      if (opts[i].value === val) {
+        // An item was selected from the list!
+        // yourCallbackHere()
+        
+        setCurrentObjectID(opts[i].getAttribute("objectid"))
+        setFlag(false);
+        break;
+      }
+    }
+  }
   return(
     <>
     <div onClick={handleShow}>
@@ -223,35 +241,64 @@ const AddBusChecking =  (props) => {
       <Modal.Body>
           <InputGroup className="mb-3">
             <FormControl
+              onInput={() => onInput()}
+              id="address-input"
+              list="station"
               aria-label="Default"
               aria-describedby="inputGroup-sizing-default"
-              placeholder="Địa chỉ"
+              placeholder="Address"
               value = {address}
               onChange = {(e) => set_address_data(e.target.value)}
             />
            
            
           </InputGroup>
-          { flag && <div>  
+          {/* { flag && <div className="recommend">  
               {
                 search_result.map((value,index) => {
                     return(
-                      <Dropdown.Item key={index} onClick={() => {
-                        set_address(value.label); setFlag(false); setCurrentObjectID(value.id.toString())
+                      <div 
+                      className="recommend-item" 
+                      key={index}
+                       onClick={() => 
+                        {
+                        console.log("click");
+                        set_address(value.label); 
+                        setFlag(false); 
+                        setCurrentObjectID(value.id.toString())
                       }
-                      }>{value.label}</Dropdown.Item>
+                      }><span>{value.label}</span></div>
                     )
               
                  
                 })
               }
      
-          </div>}
+          </div>} */}
+        {/* <div className="recommend">  
+             
+                      <div className="recommend-item" ><span>123</span></div>
+          </div> */}
+          <datalist id="station">
+            {
+                search_result.map((value,index) => {
+                    return(
+                      <option 
+                        value={value.label} 
+                        key={index} 
+                        objectid = {value.id.toString()}
+                     >Station id: {value.id}</option>
+                    )
+              
+                 
+                })
+            }
+          </datalist>
           <InputGroup className="mb-3">
             <FormControl
               aria-label="Default"
               aria-describedby="inputGroup-sizing-default"
-              placeholder="Mã xe"
+              placeholder="Bus Code"
               value = {fleetCode}
               onChange = {(e) => set_fleet_code(e.target.value.toUpperCase())}
             />
