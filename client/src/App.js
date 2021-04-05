@@ -213,87 +213,52 @@ const AddBusChecking =  (props) => {
     
   };
   const handleShow = () => setShow(true);
-  const onInput = () => {
-    var val = document.getElementById("address-input").value;
-    var opts = document.getElementById('station').childNodes;
-    for (var i = 0; i < opts.length; i++) {
-      if (opts[i].value === val) {
-        // An item was selected from the list!
-        // yourCallbackHere()
-        
-        setCurrentObjectID(opts[i].getAttribute("objectid"))
-        setFlag(false);
-        break;
-      }
-    }
-  }
   return(
     <>
     <div onClick={handleShow}>
       <img src={Logo} alt="Add" width={50} height={50}/>
     </div>
-    
-
     <Modal show={show} centered onHide={handleClose}>
       <Modal.Header closeButton>
         <Modal.Title>Tracing</Modal.Title>
       </Modal.Header>
       <Modal.Body>
           <InputGroup className="mb-3">
-            <FormControl
-              onInput={() => onInput()}
-              id="address-input"
-              list="station"
+          <FormControl
               aria-label="Default"
               aria-describedby="inputGroup-sizing-default"
               placeholder="Address"
               value = {address}
               onChange = {(e) => set_address_data(e.target.value)}
-            />
-           
-           
-          </InputGroup>
-          {/* { flag && <div className="recommend">  
-              {
-                search_result.map((value,index) => {
-                    return(
-                      <div 
-                      className="recommend-item" 
-                      key={index}
-                       onClick={() => 
-                        {
-                        console.log("click");
-                        set_address(value.label); 
-                        setFlag(false); 
-                        setCurrentObjectID(value.id.toString())
-                      }
-                      }><span>{value.label}</span></div>
-                    )
-              
-                 
-                })
-              }
+            />  
+            <div id="myInputautocomplete-list" class="autocomplete-items">
+                { flag && <div>  
+                {
+                  search_result.map((value,index) => {
+                      return(
+                        <div 
+                        key={index}
+                        onClick={() => 
+                          {
+                          console.log("click");
+                          set_address(value.label); 
+                          setFlag(false); 
+                          setCurrentObjectID(value.id.toString())
+                        }
+                        }><p 
+                        className="font-weight-bold mb-0 fs-15">
+                          {value.label}</p>
+                          <p className="mb-0 fs-13">station code: {value.id}</p>
+                        </div>
+                      )
+                
+                  
+                  })
+                }
      
-          </div>} */}
-        {/* <div className="recommend">  
-             
-                      <div className="recommend-item" ><span>123</span></div>
-          </div> */}
-          <datalist id="station">
-            {
-                search_result.map((value,index) => {
-                    return(
-                      <option 
-                        value={value.label} 
-                        key={index} 
-                        objectid = {value.id.toString()}
-                     >Station id: {value.id}</option>
-                    )
-              
-                 
-                })
-            }
-          </datalist>
+                </div>} 
+            </div>
+          </InputGroup>
           <InputGroup className="mb-3">
             <FormControl
               aria-label="Default"
