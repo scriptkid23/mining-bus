@@ -1,32 +1,32 @@
-import React, { Component } from 'react'
+import React from 'react'
 
 import Axios from 'axios'
-import {Modal,Button,InputGroup,FormControl,Dropdown} from 'react-bootstrap'
+import {Modal,Button,InputGroup,FormControl} from 'react-bootstrap'
 import './App.css';
 import Logo from './add-button.svg'
 
 
-const convertStationToID = async (station) => {
-  let formData = new FormData();
-  formData.append('act','searchfull');
-  formData.append('typ','2');
-  formData.append('key',station)
-  return await Axios({
-    method:"POST",
-    url:"/Engine/Business/Search/action.ashx",
-    baseURL:"http://timbus.vn",
-    proxy:{
-      host:"http://timbus.vn",
-      port:80,
-    },
-    headers:{
-        'Accept': 'application/json, text/javascript, */*; q=0.01',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'Accept-Language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5',
-    },
-    data:formData
-  })
-}
+// const convertStationToID = async (station) => {
+//   let formData = new FormData();
+//   formData.append('act','searchfull');
+//   formData.append('typ','2');
+//   formData.append('key',station)
+//   return await Axios({
+//     method:"POST",
+//     url:"/Engine/Business/Search/action.ashx",
+//     baseURL:"http://timbus.vn",
+//     proxy:{
+//       host:"http://timbus.vn",
+//       port:80,
+//     },
+//     headers:{
+//         'Accept': 'application/json, text/javascript, */*; q=0.01',
+//         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+//         'Accept-Language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5',
+//     },
+//     data:formData
+//   })
+// }
 const getVehicle = (fleetCode, stationID) =>{
     let formData = new FormData();
     formData.append('act','partremained');
@@ -240,11 +240,10 @@ const AddBusChecking =  (props) => {
                         key={index}
                         onClick={() => 
                           {
-                          console.log("click");
-                          set_address(value.label); 
-                          setFlag(false); 
-                          setCurrentObjectID(value.id.toString())
-                        }
+                            set_address(value.label); 
+                            setFlag(false); 
+                            setCurrentObjectID(value.id.toString())
+                          }
                         }><p 
                         className="font-weight-bold mb-0 fs-15">
                           {value.label}</p>
@@ -288,15 +287,26 @@ function App() {
         return {
           data : [...state.data, ...action.value]
         };
+      case 'CLEAR':
+        return {
+          data: []
+        }
       default:
         return new Error();
     }
   }
   const [list_result,setListResult] = React.useState([]);
   const [list_bus,dispatch] = React.useReducer(reducer,{data:[]});
+  const [flag, setFlag] = React.useState(true);
   React.useEffect(() => {
-    
-     
+    const lldata = JSON.parse(localStorage.getItem("list_bus"));
+    if(lldata !== null){
+      if( lldata.data.length !== 0) dispatch({type:"SET_VALUE",value:lldata.data})
+    }
+  },[])
+
+  React.useEffect(() => {
+     if(list_bus.data.length !== 0){
       let requests = []
       for(let i in list_bus.data){
           requests.push(getVehicle(list_bus.data[i].fleetCode, list_bus.data[i].stationID))
@@ -310,15 +320,23 @@ function App() {
           setListResult(res)
         }))
       },[3000])
-
+     }
+   
   })
+  const saveToLocalStorage = () => {
+    localStorage.setItem("list_bus",JSON.stringify(list_bus))
+  }
+  const clearLocalStorage = () => {
+    setFlag(false)
+    dispatch({type:"CLEAR"})
+    localStorage.removeItem("list_bus")
+    setListResult([])
+  }
   
   return (
     <div className="App">
-     
         <div className="list-bus">
-      
-            {list_result.length != 0 && list_result.map((value,index) => {
+            {list_result.length !== 0 && flag && list_result.map((value,index) => {
               return(<BusComponent key={index}
                 code = {value.data.dt[0].BienKiemSoat}
 
@@ -329,9 +347,10 @@ function App() {
                />)
             })}
             </div>
-        
-        <div className="Logo">
+        <div className="Logo d-flex justify-content-around">
+          <Button onClick={() => saveToLocalStorage()}>Save</Button>
           <AddBusChecking setValue = {(payload) => dispatch(payload)}/>
+          <Button variant="danger" onClick={() => clearLocalStorage()}>Clear</Button>
         </div>
     </div>
 

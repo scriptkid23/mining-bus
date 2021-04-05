@@ -5,9 +5,7 @@
 }
 .Logo {
     padding-top: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+
 }
 .bus-component {
     border: 2px solid #edc139;
