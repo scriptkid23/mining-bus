@@ -6,27 +6,28 @@ import './App.css';
 import Logo from './add-button.svg'
 
 
-// const convertStationToID = async (station) => {
-//   let formData = new FormData();
-//   formData.append('act','searchfull');
-//   formData.append('typ','2');
-//   formData.append('key',station)
-//   return await Axios({
-//     method:"POST",
-//     url:"/Engine/Business/Search/action.ashx",
-//     baseURL:"http://timbus.vn",
-//     proxy:{
-//       host:"http://timbus.vn",
-//       port:80,
-//     },
-//     headers:{
-//         'Accept': 'application/json, text/javascript, */*; q=0.01',
-//         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-//         'Accept-Language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5',
-//     },
-//     data:formData
-//   })
-// }
+const convertStationToID = async (station) => {
+  let formData = new FormData();
+  formData.append('act','searchfull');
+  formData.append('typ','2');
+  formData.append('key',station)
+  return await Axios({
+    method:"POST",
+    url:"/Engine/Business/Search/action.ashx",
+    baseURL:"http://timbus.vn",
+    proxy:{
+      host:"http://timbus.vn",
+      port:80,
+    },
+    headers:{
+        'Accept': 'application/json, text/javascript, */*; q=0.01',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Accept-Language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5',
+    },
+    data:formData
+  })
+}
+
 const getVehicle = (fleetCode, stationID) =>{
     let formData = new FormData();
     formData.append('act','partremained');
@@ -158,8 +159,16 @@ const AddBusChecking =  (props) => {
     
     set_address(value);
     let searchListBreakpoint = await searchListBreakPoint(value)
-    
     if(searchListBreakpoint.data.length > 0 && searchListBreakpoint.data.length < 3){
+      for(let  i in searchListBreakpoint.data){     
+          let {data} = await convertStationToID(searchListBreakpoint.data[i].label);
+          for(let j in data.dt.Data){
+            if(data.dt.Data[j].ObjectID == searchListBreakpoint.data[i].id){
+              searchListBreakpoint.data[i]['street'] = data.dt.Data[j].Street
+            }
+          }
+      }
+      console.log(searchListBreakpoint.data)
       setSearchResult(searchListBreakpoint.data);
       setFlag(true);
     }
@@ -247,7 +256,7 @@ const AddBusChecking =  (props) => {
                         }><p 
                         className="font-weight-bold mb-0 fs-15">
                           {value.label}</p>
-                          <p className="mb-0 fs-13">station code: {value.id}</p>
+                          <p className="mb-0 fs-13">Street: {value.street}</p>
                         </div>
                       )
                 
